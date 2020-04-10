@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "leaflet@1.6.0",
+      "destination": "wwwroot/scripts/leaflet/",
+      "files": [
+        "leaflet-src.js.map",
+        "leaflet-src.js",
+        "leaflet.js.map"
+      ]
+    }
+  ]
+}

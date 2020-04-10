@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Building Fighter - Open</title>
+    <link rel="stylesheet" href="css/index.css"/>
+    <link rel="stylesheet" href="scripts/leaflet/leaflet.css"/>
+    <script type="text/javascript" src="scripts/leaflet/leaflet-src.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Building Fighter - Open</h1>
+    </header>
+    <nav>
+
+    </nav>
+
+    <main>
+        <div id="map"></div>
+    </main>
+
+    <footer>
+
+    </footer>
+
+    <script type="text/javascript">
+        var map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -5
+        });
+        var bounds = [[0, 0], [10000, 10000]];
+        map.fitBounds(bounds);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                var geojsonFeature = JSON.parse(xhttp.responseText);
+                //var geojsonFeature = {
+                //    "type": "Polygon",
+                //    "properties": {
+                //        "name": "Coors Field",
+                //        "amenity": "Baseball Stadium",
+                //        "popupContent": "This is where the Rockies play!"
+                //    },
+                //    "coordinates": [[
+                //        [575586.01, 6271609.76999997],
+                //        [575568.060000001, 6271611.38999997],
+                //        [575566.88, 6271611.48999997],
+                //        [575564.57, 6271611.89999998],
+                //        [575551.58, 6271615.65999998]
+                //        ]]
+                //};
+                L.geoJSON(geojsonFeature).addTo(map);
+            }
+        };
+        xhttp.open("GET", "data/data.json", true);
+        xhttp.send();
+
+    </script>
+</body>
+</html>
