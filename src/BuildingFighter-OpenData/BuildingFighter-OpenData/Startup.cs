@@ -43,6 +43,10 @@ namespace BuildingFighter_OpenData
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors(policy =>
+            {
+                policy.AllowAnyOrigin();
+            });
             //app.UseAuthorization();
             //app.UseDefaultFiles();
             //app.UseStaticFiles();

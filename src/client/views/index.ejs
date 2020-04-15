@@ -1,6 +1,8 @@
 <% layout('templates/layout') -%>
 
-Bonjour
+<input type="text" name="communeSearch"/>
+<button value="Valider" onclick="search();" >Validate</button>
+<p id="searchResults"></p>
 <div id="map"></div>
 
 <script type="text/javascript">
@@ -13,27 +15,23 @@ Bonjour
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-          // Typical action to be performed when the document is ready:
           var geojsonFeature = JSON.parse(xhttp.responseText);
-          //var geojsonFeature = {
-          //    "type": "Polygon",
-          //    "properties": {
-          //        "name": "Coors Field",
-          //        "amenity": "Baseball Stadium",
-          //        "popupContent": "This is where the Rockies play!"
-          //    },
-          //    "coordinates": [[
-          //        [575586.01, 6271609.76999997],
-          //        [575568.060000001, 6271611.38999997],
-          //        [575566.88, 6271611.48999997],
-          //        [575564.57, 6271611.89999998],
-          //        [575551.58, 6271615.65999998]
-          //        ]]
-          //};
           L.geoJSON(geojsonFeature).addTo(map);
       }
   };
   xhttp.open("GET", "data/data.json", true);
   xhttp.send();
 
+function search(){
+    var searchContent = document.getElementsByName("communeSearch")[0];
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var searchResults = JSON.parse(xhttp.responseText);
+            document.getElementById("searchResults").innerHTML = searchResults;
+        }
+    };
+    xhttp.open("GET", "https://localhost:44315/api/communes?search="+searchContent.value, true);
+    xhttp.send();
+}
 </script>
