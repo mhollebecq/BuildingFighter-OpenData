@@ -1,26 +1,11 @@
 <% layout('templates/layout') -%>
 
-<input type="text" name="communeSearch"/>
+<label for="communeSearch">Commune</label>
+<input type="text" id="communeSearch" name="communeSearch" value="Toulo"/>
 <button value="Valider" onclick="search();" >Validate</button>
-<p id="searchResults"></p>
-<div id="map"></div>
+<ul id="searchResults"></ul>
 
 <script type="text/javascript">
-  var map = L.map('map', {
-      crs: L.CRS.Simple,
-      minZoom: -5
-  });
-  var bounds = [[0, 0], [10000, 10000]];
-  map.fitBounds(bounds);
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-          var geojsonFeature = JSON.parse(xhttp.responseText);
-          L.geoJSON(geojsonFeature).addTo(map);
-      }
-  };
-  xhttp.open("GET", "data/data.json", true);
-  xhttp.send();
 
 function search(){
     var searchContent = document.getElementsByName("communeSearch")[0];
@@ -28,10 +13,20 @@ function search(){
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var searchResults = JSON.parse(xhttp.responseText);
-            document.getElementById("searchResults").innerHTML = searchResults;
+            var searchResultsUl = document.getElementById("searchResults");
+            searchResultsUl.innerHTML = "";
+            for(var i =0;i<searchResults.length;i++){
+                var commune = searchResults[i];
+                var li = document.createElement("li");
+                var link = document.createElement("a");
+                link.setAttribute("href", "/board/"+commune.com);
+                link.append(commune.libelle + " (" + commune.dep+")" );
+                li.appendChild(link);
+                searchResultsUl.appendChild(li);
+            }
         }
     };
-    xhttp.open("GET", "https://localhost:44315/api/communes?search="+searchContent.value, true);
+    xhttp.open("GET", baseServiceUrl+ "/api/communes?search="+searchContent.value, true);
     xhttp.send();
 }
 </script>

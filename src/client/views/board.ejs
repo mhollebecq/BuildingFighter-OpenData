@@ -1,0 +1,38 @@
+<% layout('templates/layout') -%>
+
+
+
+<div id="map"></div>
+
+<script type="text/javascript">
+var insee = "<%= insee %>";
+    var map = L.map('map', {
+        // crs: L.CRS.Simple,
+        minZoom: -5
+    });
+    // var bounds = [[0, 0], [100, 100]];
+    // map.fitBounds(bounds);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var geojsonFeature = JSON.parse(xhttp.responseText);
+            var firstCoord = geojsonFeature.features[0].geometry.coordinates[0][0][0];
+            map.setView([firstCoord[1],firstCoord[0]], 11);
+            L.geoJSON(geojsonFeature,{
+                onEachFeature: onEachFeature
+            }).addTo(map);            
+        }
+    };
+    xhttp.open("GET", baseServiceUrl + "/api/board/commune/"+insee, true);
+    xhttp.send();
+
+    function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+        layer.on('click', function(ev) {
+            alert(ev.target.feature.properties.id); // ev is an event object (MouseEvent in this case)
+        });
+        // if (feature.properties && feature.properties.id) {
+        //     layer.bindPopup(feature.properties.id);
+    // }
+}
+</script>

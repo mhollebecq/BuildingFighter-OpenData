@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BuildingFighter_OpenData.Models;
+using BuildingFighter_OpenData.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +15,11 @@ namespace BuildingFighter_OpenData.Controllers
     [ApiController]
     public class CommunesController : ControllerBase
     {
-        private readonly IWebHostEnvironment hostingEnvironment;
-        private readonly List<(string typecom, string com, string reg, string dep, string arr, string tncc, string ncc, string nccenr, string libelle, string can, string comparent)> communes;
-        private static string _communesFileName = "communes2020.csv";
+        private readonly CommunesServices communesServices;
 
-        public CommunesController(IWebHostEnvironment hostingEnvironment)
+        public CommunesController(CommunesServices communesServices)
         {
-            this.hostingEnvironment = hostingEnvironment;
-            var communesPath = Path.Combine(hostingEnvironment.ContentRootPath, "Data", _communesFileName);
-            //typecom,com,reg,dep,arr,tncc,ncc,nccenr,libelle,can,comparent
-            communes = System.IO.File.ReadAllLines(communesPath).Skip(1)
-                .Select(l => l.Split(','))
-                .Select(s => (typecom: s[0], com: s[1], reg: s[2], dep: s[3], arr: s[4], tncc: s[5], ncc: s[6], nccenr: s[7], libelle: s[8], can: s[9], comparent: s[10]))
-                .ToList(); ;
-
+            this.communesServices = communesServices;
         }
 
         [HttpGet]
@@ -34,9 +27,9 @@ namespace BuildingFighter_OpenData.Controllers
         {
             var lowerSearch = search.ToLower();
             return new JsonResult(
-                string.IsNullOrEmpty(search) 
-                    ? new string[0]
-                    : communes.Where(c=>c.libelle.ToLower().Contains(lowerSearch)).Select(c=>c.libelle).ToArray());
-        }
+                (string.IsNullOrEmpty(search)
+                    ? Enumerable.Empty<Commune>()
+                    : communesServices.Communes).Where(c=>c.libelle.ToLower().Contains(lowerSearch)).ToArray());
+        }     
     }
 }
