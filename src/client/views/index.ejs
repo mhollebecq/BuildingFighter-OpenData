@@ -5,6 +5,11 @@
 <button value="Valider" onclick="search();" >Validate</button>
 <ul id="searchResults"></ul>
 
+<button id="find-me">Search my location</button><br/>
+<p id = "status"></p>
+
+
+
 <script type="text/javascript">
 
 function search(){
@@ -26,7 +31,50 @@ function search(){
             }
         }
     };
-    xhttp.open("GET", baseServiceUrl+ "/api/communes?search="+searchContent.value, true);
+    xhttp.open("GET", baseServiceUrl+ "/api/communes/search?q="+searchContent.value, true);
     xhttp.send();
 }
+
+function geoFindMe() {
+  const status = document.querySelector('#status');
+
+  function success(position) {
+    const latitude  = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var searchResults = JSON.parse(xhttp.responseText);
+            var searchResultsUl = document.getElementById("searchResults");
+            searchResultsUl.innerHTML = "";
+            for(var i =0;i<searchResults.length;i++){
+                var commune = searchResults[i];
+                var li = document.createElement("li");
+                var link = document.createElement("a");
+                link.setAttribute("href", "/board/"+commune.com);
+                link.append(commune.libelle + " (" + commune.dep+")" );
+                li.appendChild(link);
+                searchResultsUl.appendChild(li);
+            }
+        }
+    };
+    xhttp.open("GET", baseServiceUrl+ "/api/communes/locate?lat="+latitude+"&long="+longitude, true);
+    xhttp.send();
+    status.textContent = '';
+  }
+
+  function error(error) {
+    status.textContent = 'Unable to retrieve your location : ' + error;
+  }
+
+  if (!navigator.geolocation) {
+    status.textContent = 'Geolocation is not supported by your browser';
+  } else {
+    status.textContent = 'Locating…';
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+}
+
+document.querySelector('#find-me').addEventListener('click', geoFindMe);
 </script>

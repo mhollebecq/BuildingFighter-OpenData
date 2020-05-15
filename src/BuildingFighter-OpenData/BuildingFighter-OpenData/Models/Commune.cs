@@ -18,8 +18,10 @@ namespace BuildingFighter_OpenData.Models
         public string libelle { get; }
         public string can { get; }
         public string comparent { get; }
+        public double longi { get; }
+        public double lat { get; }
 
-        public Commune(string typecom, string com, string reg, string dep, string arr, string tncc, string ncc, string nccenr, string libelle, string can, string comparent)
+        public Commune(string typecom, string com, string reg, string dep, string arr, string tncc, string ncc, string nccenr, string libelle, string can, string comparent, double longi, double lat)
         {
             this.typecom = typecom;
             this.com = com;
@@ -32,6 +34,8 @@ namespace BuildingFighter_OpenData.Models
             this.libelle = libelle;
             this.can = can;
             this.comparent = comparent;
+            this.lat = lat;
+            this.longi = longi;
         }
     }
 }
